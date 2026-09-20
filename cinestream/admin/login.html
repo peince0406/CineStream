@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - CineStream</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="login-body">
+
+  <div class="login-card">
+    <div class="login-brand">
+      CINE<span style="color: var(--admin-primary);">STREAM</span>
+      <div style="font-size: 0.8rem; font-weight: 700; color: var(--admin-primary); margin-top: 4px;">MANAGEMENT PORTAL</div>
+    </div>
+    <p class="login-subtitle">Authenticate to access movie administration & streaming controls</p>
+
+    <div id="loginAlert" class="login-alert"></div>
+
+    <form id="loginForm">
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="username">Username or Email</label>
+        <input type="text" id="username" class="form-input" placeholder="admin or admin@cinestream.local" required autocomplete="username" />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label for="password">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn-submit" style="width: 100%; justify-content: center; padding: 12px;">
+        Log In to Admin Panel
+      </button>
+    </form>
+
+    <div class="login-hint">
+      <strong>Default Credentials:</strong><br/>
+      Username: <code>admin</code><br/>
+      Password: <code>admin123</code>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="../index.html" class="btn-view-site" style="display: inline-flex; justify-content: center;">
+        &larr; Back to Streaming Platform
+      </a>
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
