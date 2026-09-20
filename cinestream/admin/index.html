@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - CineStream</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- ADMIN NAVBAR -->
+  <header class="admin-navbar">
+    <div class="admin-nav-inner">
+      <div class="admin-brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--admin-primary)">
+          <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8V7h8v2z"/>
+        </svg>
+        <span>CINESTREAM</span>
+        <span class="admin-badge">Admin</span>
+      </div>
+
+      <div class="admin-user-menu">
+        <a href="../index.html" target="_blank" class="btn-view-site">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Visit Platform
+        </a>
+        <span id="currentAdminName" class="admin-username">Logged in as admin</span>
+        <button id="logoutBtn" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DASHBOARD CONTAINER -->
+  <main class="dashboard-container">
+    <!-- STATS OVERVIEW -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-title">Total Movies</span>
+        <span id="statTotal" class="stat-val">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">Published</span>
+        <span id="statPublished" class="stat-val" style="color: var(--admin-success);">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">Drafts (Unpublished)</span>
+        <span id="statDrafts" class="stat-val" style="color: var(--admin-warning);">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-title">Total Views</span>
+        <span id="statViews" class="stat-val" style="color: #60a5fa;">0</span>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="admin-toolbar">
+      <div class="toolbar-filters">
+        <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="Search catalog by title, genre, or keyword..." />
+        
+        <select id="adminStatusFilter" class="admin-select">
+          <option value="all">All Status</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+        </select>
+      </div>
+
+      <button id="openAddModalBtn" class="btn-add-movie">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Movie
+      </button>
+    </div>
+
+    <!-- MOVIES TABLE -->
+    <div class="table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Genres</th>
+            <th>Year</th>
+            <th>Duration</th>
+            <th>Views</th>
+            <th>Status</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="moviesTableBody">
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--admin-text-dim);">
+              Loading catalog...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- ADD / EDIT MOVIE MODAL -->
+  <div id="movieModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">Add New Movie</h3>
+        <button id="closeModalBtn" class="modal-close">&times;</button>
+      </div>
+
+      <form id="movieForm">
+        <div class="modal-body">
+          <input type="hidden" id="movieIdField" value="" />
+
+          <!-- Title -->
+          <div class="form-group">
+            <label for="formTitle">Movie Title *</label>
+            <input type="text" id="formTitle" class="form-input" placeholder="e.g. Interstellar Odyssey" required />
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="formDesc">Synopsis / Description *</label>
+            <textarea id="formDesc" class="form-textarea" placeholder="Detailed plot synopsis..." required></textarea>
+          </div>
+
+          <!-- Metadata Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formGenres">Genres (comma separated) *</label>
+              <input type="text" id="formGenres" class="form-input" placeholder="Sci-Fi, Action, Thriller" required />
+            </div>
+            <div class="form-group">
+              <label for="formYear">Release Year *</label>
+              <input type="number" id="formYear" class="form-input" min="1900" max="2100" value="2024" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formDuration">Duration *</label>
+              <input type="text" id="formDuration" class="form-input" placeholder="e.g. 115 min or 1h 55m" required />
+            </div>
+            <div class="form-group">
+              <label for="formRating">Age / Content Rating</label>
+              <input type="text" id="formRating" class="form-input" placeholder="PG-13, R, TV-MA" value="PG-13" />
+            </div>
+          </div>
+
+          <!-- POSTER SOURCE TABS -->
+          <div class="form-group">
+            <label>Movie Poster Image *</label>
+            <div class="source-tabs">
+              <button type="button" class="tab-btn active" data-tab="poster-url">Image URL</button>
+              <button type="button" class="tab-btn" data-tab="poster-file">Upload Image File</button>
+            </div>
+
+            <!-- Tab 1: Poster URL -->
+            <div id="tab-poster-url" class="tab-content active">
+              <input type="url" id="formPosterUrl" class="form-input" placeholder="https://domain.com/poster.jpg" />
+            </div>
+
+            <!-- Tab 2: Poster File Upload -->
+            <div id="tab-poster-file" class="tab-content">
+              <div class="file-dropzone" onclick="document.getElementById('posterFileInput').click()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 6px; color: var(--admin-primary);">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <div id="posterFileLabel" style="font-size: 0.85rem; color: var(--admin-text-dim);">Click or drag image file here (JPG, PNG, WEBP)</div>
+                <input type="file" id="posterFileInput" accept="image/*" style="display: none;" />
+              </div>
+            </div>
+            <img id="posterPreviewImg" class="preview-thumb" style="display: none;" alt="Poster preview" />
+          </div>
+
+          <!-- VIDEO STREAM SOURCE TABS -->
+          <div class="form-group">
+            <label>Video Storage / Stream *</label>
+            <div class="source-tabs">
+              <button type="button" class="tab-btn active" data-tab="video-url">Cloud / Storage URL</button>
+              <button type="button" class="tab-btn" data-tab="video-file">Upload Video File</button>
+            </div>
+
+            <!-- Tab 1: Video Storage URL -->
+            <div id="tab-video-url" class="tab-content active">
+              <input type="text" id="formVideoUrl" class="form-input" placeholder="https://your-s3-bucket.com/movie.mp4 or CDN URL" />
+              <span style="font-size: 0.75rem; color: var(--admin-text-dim); margin-top: 4px; display: block;">
+                Recommended: Store large video files on cloud/object storage (AWS S3, Cloudflare R2, Supabase, direct CDN).
+              </span>
+            </div>
+
+            <!-- Tab 2: Video File Upload -->
+            <div id="tab-video-file" class="tab-content">
+              <div class="file-dropzone" onclick="document.getElementById('videoFileInput').click()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 6px; color: var(--admin-primary);">
+                  <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                <div id="videoFileLabel" style="font-size: 0.85rem; color: var(--admin-text-dim);">Click to select video file (MP4, WEBM, MKV - Up to 20 GB)</div>
+                <input type="file" id="videoFileInput" accept="video/*" style="display: none;" />
+              </div>
+              <div id="uploadProgressBar" style="display: none; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 8px; overflow: hidden;">
+                <div id="uploadProgressFill" style="height: 100%; width: 0%; background: var(--admin-primary); transition: width 0.2s;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTITLES SECTION -->
+          <div class="form-group">
+            <label>Subtitles (WebVTT .vtt)</label>
+            <div class="form-row">
+              <input type="text" id="formSubLabel" class="form-input" placeholder="Label (e.g. English)" value="English" />
+              <input type="text" id="formSubSrc" class="form-input" placeholder="Subtitle URL or /uploads/subtitles/..." />
+            </div>
+          </div>
+
+          <!-- CHECKBOXES -->
+          <div style="display: flex; gap: 24px; align-items: center; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox" id="formPublished" checked />
+              <span>Published (Live for audience)</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox" id="formFeatured" />
+              <span>Featured Spotlight (Home Banner)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="cancelModalBtn" class="btn-cancel">Cancel</button>
+          <button type="submit" id="saveMovieBtn" class="btn-submit">Save Movie</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="deleteModal" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete Movie</h3>
+        <button id="closeDeleteModalBtn" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to permanently delete <strong id="deleteMovieTitle">this movie</strong>?</p>
+        <p style="font-size: 0.85rem; color: var(--admin-text-dim); margin-top: 8px;">
+          This will remove the movie metadata and delete any associated local video/poster files.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelDeleteBtn" class="btn-cancel">Cancel</button>
+        <button id="confirmDeleteBtn" class="btn-submit" style="background: #ef4444;">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="adminToast" class="admin-toast">Action completed successfully</div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
